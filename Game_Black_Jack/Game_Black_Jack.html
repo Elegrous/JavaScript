@@ -1,0 +1,142 @@
+<meta charset=“utf-8”>
+<script>
+
+function getRandomInt(min, max) {
+	return Math.floor(Math.random() * (max-min+1))+min;
+}
+
+function getCard() {
+	var cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+	return cards[getRandomInt(0, cards.length - 1)];
+}
+
+function getSum(hand) {
+	var sum = 0;
+	for (var i=0; i<hand.length; i++) {
+		var card = hand[i];
+		if (card != 'A') {
+			if (card == 'J' || card == 'Q' || card == 'K') {
+				sum = sum + 10;
+			} else {
+				sum = sum + parseInt(card);
+			}
+		}
+	}
+
+	for (var i=0; i<hand.length; i++) {
+		var card = hand[i];
+		if (card == 'A') {
+			if (sum > 10) {
+				sum = sum + 1;
+			} else {
+				sum = sum + 11;
+			}
+		}
+	}
+	return sum;
+}
+
+function getStatus() {
+	return 'Игрок: ' + player.join(', ') + ' = ' + getSum(player) + ' очков. ' + 'Дилер: ' + dealer.join(', ') + ' = ' + getSum(dealer) + ' очков. ';
+}
+
+// раздача одной карты дилеру
+var dealer = [getCard()];
+// раздача двух карт игроку
+var player = [getCard(), getCard()];
+//getCard()
+
+/* если у игрока Black Jack, 
+а у дилера 10 или A, 
+то дилер должен взять карту*/
+if (getSum(player) == 21) 
+{
+	if (getSum(dealer) == 10||11) 
+	{
+		alert('У Игрока Black Jack, но нужно проверить дилера. ' + getStatus());
+		dealer.push(getCard());	
+	
+// если у дилера Black Jack, то ровно
+		if (getSum(dealer) == 21) 
+		{
+			alert('Ровно. У Игрока и дилера Black Jack. ' + getStatus());	
+// иначе - игрок выигрывает		
+		} 
+		else 
+		{
+		alert("Игрок выигрывает. У Игрока Black Jack. " + getStatus());
+		} 
+	}
+	else 
+	{
+		alert("У Игрока Black Jack. Игрок выигрывает. " + getStatus());
+	}
+
+/* если у игрока не равно 21
+спрашиваем, хочет ли игрок еще карту */
+} 
+else 
+{
+	var answer = '';
+	do 
+	{
+	answer = prompt(getStatus() + 'Еще карту? 1 - да, иначе - нет');
+// если игрок берет карту
+		if (answer == '1') 
+		{
+			player.push(getCard());
+// проверяем на перебор у игрока			
+			if (getSum(player) > 21) 
+			{
+				alert('У Игрока перебор. Дилер выигрывает. ' + getStatus());
+				break;
+// проверка карт игрока, если равно 21
+			} 
+			else if (getSum(player) == 21) 
+			{
+				alert("У Игрока 21. " + getStatus());
+				break;
+// игрок берет карты или до 21, или пока остановится
+			} 
+		}
+	} while(answer == '1');
+
+/* если игрок перестал брать карты, то
+начинает брать карты дилер
+дилер должен брать, если у него меньше 17 */
+			
+	if (getSum(player) <= 21) 
+	{
+		while (getSum(dealer) < 17) 
+		{ 
+		dealer.push(getCard());		
+		}
+
+var sumDealer = getSum(dealer);
+var sumPlayer = getSum(player);
+
+// если у дилера равно 21
+		if (sumDealer == 21) 
+		{
+			alert('У дилера 21. Дилер выигрывает. ' + getStatus());
+// если у дилера перебор
+		} else if (sumDealer > 21) 
+		{
+			alert('У дилера перебор. Игрок выигрывает. ' + getStatus());
+// если у дилера = игроку
+		} else if (sumDealer == sumPlayer) 
+		{
+			alert('Ровно. ' + getStatus());
+// если у дилера больше, чем у игрока
+		} else if (sumDealer > sumPlayer) 
+		{
+			alert('Дилер выигрывает. ' + getStatus());
+// иначе
+		} else 
+		{
+			alert('Игрок выигрывает. ' + getStatus());
+		}
+	}
+}
+
+</script>
